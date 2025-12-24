@@ -25,7 +25,8 @@ def train_model(input_csv=None):
     if not os.path.exists(input_csv):
         raise FileNotFoundError(f"File CSV tidak ditemukan: {input_csv}")
 
-
+    mlflow.set_tracking_uri("file:./mlruns")
+    mlflow.set_experiment("Bank Loan Modelling-Tuning")
     mlflow.autolog()
 
     # load dataset
@@ -73,7 +74,12 @@ def train_model(input_csv=None):
     mlflow.log_metric("f1_score", f1)
 
     # log model
-    mlflow.sklearn.log_model(best_model, artifact_path="model")
+    mlflow.sklearn.log_model(
+        sk_model=best_model,
+        artifact_path="model",
+        registered_model_name="BankLoanLogisticRegression"
+    )
+
 
     # confusion matrik
     cm_path = os.path.join(current_dir, "confusion_matrix.png")

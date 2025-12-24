@@ -1,0 +1,10 @@
+artifact_location: file:D:/Kuliah/Semester 7/Asah/SMSML_Bella_Tri_Andhini/Workflow-CI/MLProject/mlruns/631378360352231663/models/m-7ab2f2e94b7b4be29ee93955a57bbf82/artifacts
+creation_timestamp: 1766562166482
+experiment_id: '631378360352231663'
+last_updated_timestamp: 1766562170783
+model_id: m-7ab2f2e94b7b4be29ee93955a57bbf82
+model_type: null
+name: best_estimator
+source_run_id: a387c59aca704439b989ed82f188b905
+status: 2
+status_message: null

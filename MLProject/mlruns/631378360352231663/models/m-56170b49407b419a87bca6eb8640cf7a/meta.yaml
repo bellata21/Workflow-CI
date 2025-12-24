@@ -1,0 +1,10 @@
+artifact_location: file:D:/Kuliah/Semester 7/Asah/SMSML_Bella_Tri_Andhini/Workflow-CI/MLProject/mlruns/631378360352231663/models/m-56170b49407b419a87bca6eb8640cf7a/artifacts
+creation_timestamp: 1766562159092
+experiment_id: '631378360352231663'
+last_updated_timestamp: 1766562165460
+model_id: m-56170b49407b419a87bca6eb8640cf7a
+model_type: null
+name: model
+source_run_id: a387c59aca704439b989ed82f188b905
+status: 2
+status_message: null
