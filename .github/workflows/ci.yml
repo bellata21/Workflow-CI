@@ -1,0 +1,39 @@
+name: MLflow CI Training
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  train-model:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Miniconda
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        auto-update-conda: true
+        python-version: 3.11
+        environment-file: MLProject/conda.yaml
+        activate-environment: mlflow-env
+
+    - name: Install MLflow
+      shell: bash -l {0}
+      run: |
+        pip install mlflow==3.7.0
+
+    - name: Run MLflow Project (Training)
+      shell: bash -l {0}
+      run: |
+        cd MLProject
+        mlflow run . --env-manager=conda
+
+    - name: Upload MLflow Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: mlflow-artifacts
+        path: MLProject/mlruns

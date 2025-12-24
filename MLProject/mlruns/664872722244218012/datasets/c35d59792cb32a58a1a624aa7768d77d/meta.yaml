@@ -1,0 +1,15 @@
+digest: 66a80848
+name: dataset
+profile: '{"num_rows": 4000, "num_elements": 48000}'
+schema: '{"mlflow_colspec": [{"type": "double", "name": "Age", "required": true},
+  {"type": "double", "name": "Experience", "required": true}, {"type": "double", "name":
+  "Income", "required": true}, {"type": "double", "name": "Family", "required": true},
+  {"type": "double", "name": "CCAvg", "required": true}, {"type": "double", "name":
+  "Mortgage", "required": true}, {"type": "double", "name": "Securities Account",
+  "required": true}, {"type": "double", "name": "CD Account", "required": true}, {"type":
+  "double", "name": "Online", "required": true}, {"type": "double", "name": "CreditCard",
+  "required": true}, {"type": "double", "name": "Education_Label_Graduate", "required":
+  true}, {"type": "double", "name": "Education_Label_Undergraduate", "required": true}]}'
+source: '{"tags": {"mlflow.user": "ASUS", "mlflow.source.name": "modelling_tuning.py",
+  "mlflow.source.type": "LOCAL"}}'
+source_type: code

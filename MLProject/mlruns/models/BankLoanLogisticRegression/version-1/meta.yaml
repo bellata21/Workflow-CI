@@ -1,0 +1,15 @@
+creation_timestamp: 1766554478038
+current_stage: None
+deployment_job_state: null
+description: null
+last_updated_timestamp: 1766554478038
+model_id: m-043c376e0d6941db88dbb0af043dda6e
+name: BankLoanLogisticRegression
+run_id: e8ebf93938114ae4bef8b2c9c6e86c3a
+run_link: null
+source: models:/m-043c376e0d6941db88dbb0af043dda6e
+status: READY
+status_message: null
+storage_location: file:D:/Kuliah/Semester 7/Asah/SMSML_Bella_Tri_Andhini/Workflow-CI/MLProject/mlruns/664872722244218012/models/m-043c376e0d6941db88dbb0af043dda6e/artifacts
+user_id: null
+version: 1

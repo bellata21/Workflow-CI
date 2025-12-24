@@ -1,0 +1,8 @@
+name: BankLoanCI
+conda_env: conda.yaml
+
+entry_points:
+  main:
+    parameters:
+      input_csv: {type: str, default: "bank_loan_preprocessing.csv"}
+    command: "python modelling_tuning.py --input_csv {input_csv}"
