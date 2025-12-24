@@ -17,81 +17,81 @@ import argparse
 
 
 def train_model(input_csv=None):
-    # Dapatkan folder script saat ini
     current_dir = os.path.dirname(__file__)
-    
-    # Jika input_csv tidak diberikan, default ke CSV di folder script
+
     if input_csv is None:
         input_csv = os.path.join(current_dir, "bank_loan_preprocessing.csv")
-    
+
     if not os.path.exists(input_csv):
         raise FileNotFoundError(f"File CSV tidak ditemukan: {input_csv}")
 
-    # MLflow setup
-    mlflow.set_tracking_uri("file:./mlruns")
-    mlflow.set_experiment("Bank Loan Modelling-Tuning")
+
     mlflow.autolog()
 
-    # Load dataset
+    # load dataset
     df = pd.read_csv(input_csv)
     X = df.drop(columns=["Personal Loan"])
     y = df["Personal Loan"]
 
-    # Split dataset
+    # split dataset
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42, stratify=y
     )
 
-    # Hyperparameter grid
-    param_grid = {"C": [0.01, 0.1, 1, 10], "solver": ["liblinear", "lbfgs"]}
+    # hyperparameter grid
+    param_grid = {
+        "C": [0.01, 0.1, 1, 10],
+        "solver": ["liblinear", "lbfgs"]
+    }
+
     base_model = LogisticRegression(max_iter=1000, random_state=42)
-    grid_search = GridSearchCV(base_model, param_grid, cv=5, scoring="accuracy", n_jobs=-1)
+    grid_search = GridSearchCV(
+        base_model,
+        param_grid,
+        cv=5,
+        scoring="accuracy",
+        n_jobs=-1
+    )
 
-    # Manual logging dengan MLflow
-    with mlflow.start_run():
-        grid_search.fit(X_train, y_train)
-        best_model = grid_search.best_estimator_
+    # train
+    grid_search.fit(X_train, y_train)
+    best_model = grid_search.best_estimator_
 
-        # Prediksi & evaluasi
-        y_pred = best_model.predict(X_test)
-        acc = accuracy_score(y_test, y_pred)
-        precision = precision_score(y_test, y_pred)
-        recall = recall_score(y_test, y_pred)
-        f1 = f1_score(y_test, y_pred)
+    # eval
+    y_pred = best_model.predict(X_test)
+    acc = accuracy_score(y_test, y_pred)
+    precision = precision_score(y_test, y_pred)
+    recall = recall_score(y_test, y_pred)
+    f1 = f1_score(y_test, y_pred)
 
-        # Log params & metrics
-        mlflow.log_param("best_C", grid_search.best_params_["C"])
-        mlflow.log_param("best_solver", grid_search.best_params_["solver"])
-        mlflow.log_metric("accuracy", acc)
-        mlflow.log_metric("precision", precision)
-        mlflow.log_metric("recall", recall)
-        mlflow.log_metric("f1_score", f1)
+    # manual logging
+    mlflow.log_param("best_C", grid_search.best_params_["C"])
+    mlflow.log_param("best_solver", grid_search.best_params_["solver"])
+    mlflow.log_metric("accuracy", acc)
+    mlflow.log_metric("precision", precision)
+    mlflow.log_metric("recall", recall)
+    mlflow.log_metric("f1_score", f1)
 
-        # Log model
-        mlflow.sklearn.log_model(best_model, artifact_path="model")
-        mlflow.sklearn.log_model(
-            sk_model=best_model,
-            artifact_path="model",
-            registered_model_name="BankLoanLogisticRegression"
-        )
+    # log model
+    mlflow.sklearn.log_model(best_model, artifact_path="model")
 
+    # confusion matrik
+    cm_path = os.path.join(current_dir, "confusion_matrix.png")
+    ConfusionMatrixDisplay.from_estimator(best_model, X_test, y_test)
+    plt.savefig(cm_path)
+    mlflow.log_artifact(cm_path)
+    plt.close()
 
-        # Artefak: Confusion Matrix
-        cm_path = os.path.join(current_dir, "confusion_matrix.png")
-        ConfusionMatrixDisplay.from_estimator(best_model, X_test, y_test)
-        plt.savefig(cm_path)
-        mlflow.log_artifact(cm_path)
-        plt.close()
+    # kurva ROC 
+    roc_path = os.path.join(current_dir, "roc_curve.png")
+    RocCurveDisplay.from_estimator(best_model, X_test, y_test)
+    plt.savefig(roc_path)
+    mlflow.log_artifact(roc_path)
+    plt.close()
 
-        # Artefak: ROC Curve
-        roc_path = os.path.join(current_dir, "roc_curve.png")
-        RocCurveDisplay.from_estimator(best_model, X_test, y_test)
-        plt.savefig(roc_path)
-        mlflow.log_artifact(roc_path)
-        plt.close()
+    print("Best Params:", grid_search.best_params_)
+    print(f"Accuracy: {acc:.3f}, Precision: {precision:.3f}, Recall: {recall:.3f}, F1: {f1:.3f}")
 
-        print("Best Params:", grid_search.best_params_)
-        print(f"Accuracy: {acc:.3f}, Precision: {precision:.3f}, Recall: {recall:.3f}, F1: {f1:.3f}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
