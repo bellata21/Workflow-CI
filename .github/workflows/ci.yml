@@ -2,7 +2,7 @@ name: MLflow CI Training
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
@@ -13,23 +13,29 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Set up Miniconda
-      uses: conda-incubator/setup-miniconda@v3
+    - name: Set up Python 3.12.7
+      uses: actions/setup-python@v4
       with:
-        auto-update-conda: true
-        python-version: 3.11
-        environment-file: MLProject/conda.yaml
-        activate-environment: mlflow-env
+        python-version: 3.12.7
 
-    - name: Install MLflow
-      shell: bash -l {0}
+    - name: Check Python environment
       run: |
-        pip install mlflow==3.7.0
+        python --version
+        pip --version
+
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install -r Membangun_model/requirements.txt
+        pip install mlflow==2.19.0
+
+    - name: Set MLflow Tracking URL
+      run: |
+        export MLFLOW_TRACKING_URI=file://${{ github.workspace }}/MLProject/mlruns
 
     - name: Run MLflow Project (Training)
-      shell: bash -l {0}
+      working-directory: MLProject
       run: |
-        cd MLProject
         mlflow run . --env-manager=conda
 
     - name: Upload MLflow Artifacts
@@ -37,4 +43,12 @@ jobs:
       with:
         name: mlflow-artifacts
         path: MLProject/mlruns
-        
+
+    - name: Post set up Python 3.12.7
+      run: echo "Post setup Python complete"
+
+    - name: Post Checkout repository
+      run: echo "Post checkout repository complete"
+
+    - name: Complete Job
+      run: echo "MLflow CI Training Completed"
