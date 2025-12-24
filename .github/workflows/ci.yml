@@ -10,45 +10,65 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+    # 1. set up job
+    - name: set up job
+      run: echo "Job setup start"
 
-    - name: Set up Python 3.12.7
+    # 2. run actions/checkout@v3
+    - name: run actions/checkout@v3
+      uses: actions/checkout@v3
+
+    # 3. set up python 3.12.7
+    - name: set up python 3.12.7
       uses: actions/setup-python@v4
       with:
         python-version: 3.12.7
 
-    - name: Check Python environment
+    # 4. check env
+    - name: check env
       run: |
         python --version
         pip --version
+        conda --version || echo "conda not installed"
 
-    - name: Install dependencies
+    # 5. install dependencies
+    - name: install dependencies
       run: |
         pip install --upgrade pip
-        pip install -r Membangun_model/requirements.txt
         pip install mlflow==2.19.0
+        conda env update --file MLProject/conda.yaml || echo "No conda.yaml found"
 
-    - name: Set MLflow Tracking URL
+    # 6. set MLflow Tracking URL
+    - name: set MLflow Tracking URL
       run: |
         export MLFLOW_TRACKING_URI=file://${{ github.workspace }}/MLProject/mlruns
 
-    - name: Run MLflow Project (Training)
+    # 7. Run mlflow project
+    - name: Run mlflow project
       working-directory: MLProject
       run: |
         mlflow run . --env-manager=conda
 
-    - name: Upload MLflow Artifacts
+    # 8. install python dependencies
+    - name: install python dependencies
+      run: |
+        conda list || echo "Listing conda packages"
+
+    # 9. upload to github
+    - name: upload to github
       uses: actions/upload-artifact@v4
       with:
         name: mlflow-artifacts
         path: MLProject/mlruns
 
-    - name: Post set up Python 3.12.7
+    # 10. post set up python 3.12.7
+    - name: post set up python 3.12.7
       run: echo "Post setup Python complete"
 
-    - name: Post Checkout repository
-      run: echo "Post checkout repository complete"
+    # 11. post run actions/checkout@v3
+    - name: post run actions/checkout@v3
+      run: echo "Post checkout complete"
 
-    - name: Complete Job
+    # 12. complete job
+    - name: complete job
       run: echo "MLflow CI Training Completed"
